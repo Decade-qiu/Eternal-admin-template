@@ -7,3 +7,5 @@ createApp(App).mount("#app");
 function a() {
   console.log("a");
 }
+
+const aa = () => 1;
