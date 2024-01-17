@@ -2,7 +2,6 @@
 import request from '@/utils/request';
 // import type只会导入类型，不会导入具体的值
 import type { loginForm, loginResponseData, userInfoResponseData } from './type';
-import { AxiosResponse } from 'axios';
 enum API {
     LOGIN_URL = '/user/login',
     USERINFO_URL = '/user/info',

@@ -11,6 +11,10 @@ import 'virtual:svg-icons-register';
 import globalComponents from "@/components";
 // 引入全局样式
 import "@/styles/index.scss";
+// 引入路由
+import router from "@/router";
+// 引入pinia
+import pinia from "@/store";
 
 const app = createApp(App);
 
@@ -19,4 +23,6 @@ app.use(globalComponents);
 app.use(ElementPlus, {
     locale: zhCn
 })
+app.use(router);
+app.use(pinia);
 app.mount('#app');

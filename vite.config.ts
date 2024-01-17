@@ -1,6 +1,6 @@
 import { defineConfig, UserConfig, ConfigEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
-import path from "path";
+import {resolve} from "path";
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { viteMockServe } from 'vite-plugin-mock'
 //  https://vitejs.dev/config/
@@ -10,7 +10,7 @@ export default defineConfig(({ command }: ConfigEnv): UserConfig => {
             vue(),
             createSvgIconsPlugin({
                 // Specify the icon folder to be cached
-                iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+                iconDirs: [resolve(process.cwd(), 'src/assets/icons')],
                 // Specify symbolId format
                 symbolId: 'icon-[dir]-[name]',
             }),
@@ -21,7 +21,7 @@ export default defineConfig(({ command }: ConfigEnv): UserConfig => {
         ],
         resolve: {
             alias: {
-                "@": path.resolve("./src") // 相对路径别名配置，使用 @ 代替 src
+                "@": resolve("./src") // 相对路径别名配置，使用 @ 代替 src
             }
         },
         css: {
