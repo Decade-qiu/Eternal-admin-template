@@ -3,7 +3,9 @@ import { defineStore } from 'pinia';
 //引入登陆接口
 import { reqLogin } from '@/api/user';
 //引入数据类型
-import type { loginForm } from '@/api/user/type';
+import { loginForm } from '@/api/user/type';
+//引入常量路由
+import { constantRoute } from '@/router/router';
 //创建用户小仓库 
 const useUserStore = defineStore('User', () => { 
     let token = ''; 
@@ -20,7 +22,9 @@ const useUserStore = defineStore('User', () => {
         }
     }
     return {
-        login, token: localStorage.getItem('TOKEN') ?? ''
+        login, 
+        token: localStorage.getItem('TOKEN') ?? '',
+        menuRouters: constantRoute,
     };
 }) 
 //对外暴露小仓库 

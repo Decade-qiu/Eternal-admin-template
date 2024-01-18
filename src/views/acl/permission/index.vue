@@ -1,5 +1,5 @@
 <template>
-    <div></div>
+    <div>per</div>
 </template>
 
 <script setup lang='ts'>

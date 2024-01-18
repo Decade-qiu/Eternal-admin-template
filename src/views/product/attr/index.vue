@@ -1,5 +1,5 @@
 <template>
-    <div></div>
+    <div>attr</div>
 </template>
 
 <script setup lang='ts'>
