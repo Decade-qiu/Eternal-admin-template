@@ -19,18 +19,18 @@
             <el-button class="button" size="small" icon="Refresh" circle @click="updateMain"></el-button>
             <el-button class="button" size="small" icon="FullScreen" circle @click="fullScreen"></el-button>
             <el-button class="button" size="small" icon="Setting" circle></el-button>
-            <img src="../../../public/vite.svg" />
+            <img :src="userStore.data.avatar" />
             <!-- 下拉菜单 -->
             <el-dropdown>
                 <span class="el-dropdown-link">
-                    admin
+                    {{ userStore.data.username }}
                     <el-icon class="el-icon--right">
                         <arrow-down />
                     </el-icon>
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item>退出登陆</el-dropdown-item>
+                        <el-dropdown-item @click="logout">退出登陆</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -40,15 +40,18 @@
 
 <script setup lang='ts'>
 import useLayoutStore from '@/store/modules/layout';
-import { useRoute } from "vue-router";
+import useUserStore from '@/store/modules/user';
+import { useRoute, useRouter } from "vue-router";
+const userStore = useUserStore();
 const layoutStore = useLayoutStore();
 const route = useRoute();
+const router = useRouter();
 const changeIcon = () => {
     layoutStore.changeFold();
-}
+};
 const updateMain = () => {
     layoutStore.changeRefresh();
-}
+};
 const fullScreen = () => {
     let full = document.fullscreenElement;
     //切换成全屏
@@ -59,7 +62,13 @@ const fullScreen = () => {
         //退出全屏
         document.exitFullscreen();
     }
-}
+};
+const logout = () => {
+    // 清除用户相关数据
+    userStore.logout();
+    // 跳转登陆
+    router.push({ path: '/login', query: { redirect: route.path } });
+};
 </script>
 
 <style scoped lang="scss">

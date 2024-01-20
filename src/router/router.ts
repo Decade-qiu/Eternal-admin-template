@@ -1,16 +1,3 @@
-//对外暴露配置路由(常量路由)
-export type constantRouteType = {
-    path: string;
-    component: any;
-    name: string;
-    meta: {
-        title: string;
-        hidden: boolean;
-        icon: string;
-    };
-    children?: constantRouteType;
-}[];
-
 //对外暴露配置路由(常量路由):全部用户都可以访问到的路由
 export const constantRoute = [
     {

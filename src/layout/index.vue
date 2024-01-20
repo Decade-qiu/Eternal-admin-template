@@ -8,7 +8,7 @@
                 <!-- 菜单组件 -->
                 <el-menu :default-active="route.path" background-color="#001529" text-color="white" :collapse="layoutStore.fold">
                     <!-- 根据路由动态生成菜单 -->
-                    <Menu :menuList="userStore.menuRouters"></Menu>
+                    <Menu :menuList="userStore.constantRoute" :depth="1" ></Menu>
                 </el-menu>
             </el-scrollbar>
         </div>

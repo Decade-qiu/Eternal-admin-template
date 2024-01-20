@@ -8,4 +8,4 @@ enum API {
 };
 // 暴露请求函数
 export const reqLogin = (data: loginForm) => request.post<any, loginResponseData, loginForm>(API.LOGIN_URL, data);
-export const reqUserInfo = () => request.get<userInfoResponseData>(API.USERINFO_URL);
+export const reqUserInfo = () => request.get<any, userInfoResponseData>(API.USERINFO_URL);

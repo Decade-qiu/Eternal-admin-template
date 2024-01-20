@@ -30,10 +30,11 @@
 import { User, Lock } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import useUserStore from '@/store/modules/user';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { ElNotification, FormInstance,  } from 'element-plus';
 import { getTime } from '@/utils/time';
 let router = useRouter();
+let route = useRoute();
 let flag = ref(false);
 let userStore = useUserStore();
 let loginForm = ref({ username: 'admin', password: '111111' });
@@ -78,7 +79,9 @@ const login = async () => {
     flag.value = true;
     userStore.login(loginForm.value)
         .then((res) => {
-            router.push({ path: '/' });
+            // console.log(route.query, route.params);
+            let redirect = route.query.redirect as string;
+            router.push({ path: redirect ? redirect : '/' });
             ElNotification({
                 title: `HI，${getTime()}好！`,
                 message: '欢迎回来',

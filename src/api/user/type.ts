@@ -4,18 +4,21 @@ export type loginForm = {
     password: string
 };
 
+export type errorMsg = {
+    message: string
+}
+
 // 登陆接口返回数据类型
 type dataType = {
-    token?: string,
-    message?: string
+    token: string,
 };
 export type loginResponseData = {
     code: number,
-    data: dataType
+    data: dataType | errorMsg
 };
 
 // 用户信息接口返回数据类型
-type userType = {
+export type userType = {
     userId: number,
     username: string,
     avatar: string,
@@ -26,7 +29,8 @@ type userType = {
     routers: string[],
     token: string
 };
+
 export type userInfoResponseData = {
     code: number,
-    data: userType
+    data: userType | errorMsg,
 };

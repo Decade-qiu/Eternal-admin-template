@@ -17,9 +17,6 @@
     /* Linting */
     "strict": true,
 
-    // 全局组件声明
-    "types": ["element-plus/global"],
-
     // 路径别名
     "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
     "paths": { //路径映射，相对于baseUrl

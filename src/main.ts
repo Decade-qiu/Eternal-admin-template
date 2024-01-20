@@ -1,5 +1,7 @@
 import { createApp } from "vue";
 import App from "@/App.vue";
+// 引入pinia
+import pinia from "@/store";
 // elm组件
 import 'element-plus/dist/index.css';
 // svg图标服务
@@ -10,8 +12,6 @@ import globalComponents from "@/components";
 import "@/styles/index.scss";
 // 引入路由
 import router from "@/router";
-// 引入pinia
-import pinia from "@/store";
 
 const app = createApp(App);
 
