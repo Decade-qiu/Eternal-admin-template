@@ -59,7 +59,7 @@ let $router = useRouter();
 //点击菜单的回调
 const goRoute = (vc: MenuItemRegistered) => {
     //路由跳转
-    console.log(vc);
+    // console.log(vc);
     $router.push(vc.index);
 };
 </script>

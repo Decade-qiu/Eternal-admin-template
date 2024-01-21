@@ -37,7 +37,7 @@ let router = useRouter();
 let route = useRoute();
 let flag = ref(false);
 let userStore = useUserStore();
-let loginForm = ref({ username: 'admin', password: '111111' });
+let loginForm = ref({ username: 'admin', password: 'atguigu123' });
 let forms = ref<FormInstance>();
 //自定义校验规则函数
 const validatorUserName = (rule: any, value: any, callback: any) => {

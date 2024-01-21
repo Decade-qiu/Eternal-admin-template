@@ -1,44 +1,49 @@
 //创建用户相关的小仓库 
 import { defineStore } from 'pinia';
 //引入登陆接口
-import { reqLogin, reqUserInfo } from '@/api/user';
+import { reqLogin, reqUserInfo, reqLogout } from '@/api/user';
 //引入数据类型
-import { loginForm, userType, errorMsg } from '@/api/user/type';
+import { loginFormData, userInfoReponseData } from '@/api/user/type';
 //引入常量路由
-// import { RouteRecordRaw } from 'vue-router';
 import { constantRoute } from '@/router/router';
-import {Ref, ref, computed} from 'vue'; 
+import { Ref, ref, computed } from 'vue';
 //创建用户小仓库 
 const useUserStore = defineStore('User', () => {
     const token = ref<string>("");
-    const data = ref<userType | {}>({});
-    async function login(data: loginForm): Promise<string> {
+    const data = ref<userInfoReponseData['data'] | {}>({});
+    async function login(data: loginFormData): Promise<string> {
         const res = await reqLogin(data);
         if (res.code == 200) {
-            token.value = (res.data as userType).token as string;
+            token.value = res.data;
             //由于pinia|vuex存储数据其实利用js对象 
             //需要本地存储持久化存储一份
             localStorage.setItem('TOKEN', token.value);
             return Promise.resolve('ok');
         } else {
-            return Promise.reject(new Error(`登陆失败：${res.code}`))
+            return Promise.reject(new Error(`登陆失败：${res.data}`))
         }
     }
     async function userInfo() {
         const res = await reqUserInfo();
         if (res.code == 200) {
             data.value = res.data;
-            return Promise.resolve(data as Ref<userType>);
+            return Promise.resolve(data);
         } else {
-            return Promise.reject(new Error((res.data as errorMsg).message));
+            return Promise.reject(new Error(res.message));
         }
     }
-    function logout() {
-        localStorage.removeItem('TOKEN');
-        token.value = '';
-        data.value = {};
+    async function logout() {
+        let res = await reqLogout();
+        if (res.code == 200) {
+            localStorage.removeItem('TOKEN');
+            token.value = '';
+            data.value = {};
+            return Promise.resolve('ok');
+        } else {
+            return Promise.reject(new Error(res.message));
+        }
     }
-    const  _getToken = computed(() => {
+    const _getToken = computed(() => {
         token.value = localStorage.getItem('TOKEN') || '';
         return token.value;
     });
@@ -47,7 +52,7 @@ const useUserStore = defineStore('User', () => {
         token: _getToken,
         constantRoute,
         userInfo,
-        data: data as Ref<userType>,
+        data: data as Ref<userInfoReponseData['data']>,
         logout,
     };
 })

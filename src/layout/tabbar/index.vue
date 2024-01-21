@@ -20,10 +20,10 @@
             <el-button class="button" size="small" icon="FullScreen" circle @click="fullScreen"></el-button>
             <el-button class="button" size="small" icon="Setting" circle></el-button>
             <img :src="userStore.data.avatar" />
-            <!-- 下拉菜单 -->
+            <!-- 下拉菜单 -->   
             <el-dropdown>
                 <span class="el-dropdown-link">
-                    {{ userStore.data.username }}
+                    {{ userStore.data.name }}
                     <el-icon class="el-icon--right">
                         <arrow-down />
                     </el-icon>
@@ -41,6 +41,7 @@
 <script setup lang='ts'>
 import useLayoutStore from '@/store/modules/layout';
 import useUserStore from '@/store/modules/user';
+import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from "vue-router";
 const userStore = useUserStore();
 const layoutStore = useLayoutStore();
@@ -65,9 +66,15 @@ const fullScreen = () => {
 };
 const logout = () => {
     // 清除用户相关数据
-    userStore.logout();
-    // 跳转登陆
-    router.push({ path: '/login', query: { redirect: route.path } });
+    userStore.logout()
+    .then(() => {
+        // 跳转登陆
+        ElMessage.success('退出成功');
+        router.push({ path: '/login', query: { redirect: route.path } });
+    })
+    .catch((error) => {
+        ElMessage.error(error.message);
+    });
 };
 </script>
 
