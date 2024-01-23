@@ -1,11 +1,12 @@
 import { App, Component } from 'vue';
 import svgIcon from './SvgIcon/index.vue';
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import { plugins, components } from '@/components/ElementPlus/index.ts'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+import { plugins, components } from '@/components/ElementPlus/index.ts';
+import category from './Category/index.vue';
 type GlobalComponents = {
     [key: string]: Component
 }
-const allGlobalComponents: GlobalComponents = { svgIcon }
+const allGlobalComponents: GlobalComponents = { svgIcon, category }
 // 对外暴露插件对象
 export default {
     install(app: App) {

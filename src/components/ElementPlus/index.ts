@@ -70,7 +70,6 @@ import {
     ElDropdownMenu,
     ElDialog,
     ElUpload,
-
 } from 'element-plus';
 
 export const components = [

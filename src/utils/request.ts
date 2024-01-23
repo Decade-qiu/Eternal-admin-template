@@ -27,26 +27,9 @@ request.interceptors.response.use((response) => {
     // 响应失败 处理网络错误的
     console.log(error);
     let msg = error.message || "未知错误";
-    const status = error.response.status;
-    switch (status) {
-        case 401:
-            msg = "token过期";
-            break;
-        case 403:
-            msg = '无权访问';
-            break;
-        case 404:
-            msg = "请求地址错误";
-            break;
-        case 500:
-            msg = "服务器出现问题";
-            break;
-        default:
-            msg = "无网络";
-    }
     ElMessage({
         type: 'error',
-        message: msg
+        message: `${msg} ${error.code}`
     });
     return Promise.reject(error);
 });
