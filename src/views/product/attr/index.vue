@@ -21,8 +21,12 @@
                     <!-- row：已有的属性对象 -->
                     <template v-slot="{ row, $index }">
                         <!-- 修改已有属性的按钮 -->
-                        <el-button type="primary" size="small" icon="Edit"></el-button>
-                        <el-button type="primary" size="small" icon="Delete"></el-button>
+                        <el-button type="primary" size="small" icon="Edit" @click="updateAttr(row)"></el-button>
+                        <el-popconfirm :title="`你确定删除${row.attrName}?`" width="200px" @confirm="deleteAttr(row.id)">
+                            <template #reference>
+                                <el-button type="primary" size="small" icon="Delete"></el-button>
+                            </template>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
@@ -40,10 +44,11 @@
                 <el-table-column label="属性值名称">
                     <!-- row:即为当前属性值对象 -->
                     <template v-slot="{ row, $index }">
-                        <!-- <el-input :ref="(vc: any) => inputArr[$index] = vc" v-if="row.flag" @blur="toLook(row, $index)"
-                            size="small" placeholder="请你输入属性值名称" v-model="row.valueName"></el-input>
-                        <div v-else @click="toEdit(row, $index)">{{ row.valueName }}</div> -->
-                        {{ row }}
+                        <el-input :ref="(el) => {
+                            inputArr[$index] = el;
+                        }" v-if="row.flag" @blur="toLook(row, $index)" size="small" placeholder="请你输入属性值名称"
+                            v-model="row.valueName"></el-input>
+                        <div v-else @click="toEdit(row, $index)">{{ row.valueName }}</div>
                     </template>
                 </el-table-column>
                 <el-table-column label="属性值操作">
@@ -62,13 +67,13 @@
   
 <script setup lang="ts">
 //组合式API函数watch
-import { watch, ref, nextTick, onBeforeUnmount } from 'vue';
+import { watch, ref, nextTick, onBeforeUnmount, VNodeRef } from 'vue';
 //引入获取已有属性与属性值接口
 import { reqAttr, reqAddOrUpdateAttr, reqRemoveAttr } from '@/api/product/attr';
 import type { AttrResponseData, Attr, AttrValue } from '@/api/product/attr/type';
 //获取分类的仓库
 import useCategoryStore from '@/store/modules/category';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElInput } from 'element-plus';
 let categoryStore = useCategoryStore();
 const scene = ref<boolean>(false);
 //存储已有的属性与属性值
@@ -88,15 +93,16 @@ watch(() => categoryStore.c3Id, (val) => {
 });
 //添加属性数据
 //准备一个数组:将来存储对应的组件实例el-input
+type elInput = InstanceType<typeof ElInput>;
 let inputArr = ref<any>([]);
 //收集新增的属性的数据
 let attrParams = ref<Attr>({
-  attrName: '', //新增的属性的名字
-  attrValueList: [
-    //新增的属性值数组
-  ],
-  categoryId: '', //三级分类的ID
-  categoryLevel: 3, //代表的是三级分类
+    attrName: '', //新增的属性的名字
+    attrValueList: [
+        //新增的属性值数组
+    ],
+    categoryId: '', //三级分类的ID
+    categoryLevel: 3, //代表的是三级分类
 });
 const addAttr = () => {
     //添加属性
@@ -112,18 +118,106 @@ const addAttr = () => {
 };
 //添加属性值按钮的回调
 const addAttrValue = () => {
-  //点击添加属性值按钮的时候,向数组添加一个属性值对象
-  attrParams.value.attrValueList.push({
-    valueName: '',
-    flag: true, //控制每一个属性值编辑模式与切换模式的切换
-  })
-}
-const save = () => {
-
+    //点击添加属性值按钮的时候,向数组添加一个属性值对象
+    attrParams.value.attrValueList.push({
+        valueName: '',
+        flag: true, //控制每一个属性值编辑模式与切换模式的切换
+    });
+    nextTick(() => {
+        inputArr.value[attrParams.value.attrValueList.length - 1].focus()
+    });
+};
+const toLook = (row: AttrValue, $index: number) => {
+    if (row.valueName.trim() == '') {
+        //删除调用对应属性值为空的元素
+        attrParams.value.attrValueList.splice($index, 1);
+        //提示信息
+        ElMessage({
+            type: 'error',
+            message: '属性值不能为空',
+        });
+        return;
+    }
+    //非法情况2
+    let repeat = attrParams.value.attrValueList.find((item) => {
+        //切记把当前失却焦点属性值对象从当前数组扣除判断
+        if (item != row) {
+            return item.valueName === row.valueName;
+        }
+    });
+    if (repeat) {
+        //将重复的属性值从数组当中干掉
+        attrParams.value.attrValueList.splice($index, 1);
+        //提示信息
+        ElMessage({
+            type: 'error',
+            message: '属性值不能重复',
+        });
+        return;
+    }
+    row.flag = false;
+};
+const toEdit = (row: AttrValue, $index: number) => {
+    row.flag = true;
+    nextTick(() => {
+        inputArr.value[$index].focus();
+    });
+};
+const save = async () => {
+    let result = await reqAddOrUpdateAttr(attrParams.value);
+    //添加属性|修改已有的属性已经成功
+    if (result.code == 200) {
+        //切换场景
+        scene.value = false;
+        //提示信息
+        ElMessage({
+            type: 'success',
+            message: attrParams.value.id ? '修改成功' : '添加成功'
+        });
+        //获取全部已有的属性与属性值
+        getAttr();
+    } else {
+        ElMessage({
+            type: 'error',
+            message: attrParams.value.id ? '修改失败' : '添加失败'
+        })
+    }
 };
 const cancel = () => {
     scene.value = false;
 };
+//table表格修改已有属性按钮的回调
+const updateAttr = (row: Attr) => {
+    //切换为添加与修改属性的结构
+    scene.value = true;
+    //将已有的属性对象赋值给attrParams对象即为
+    //ES6->Object.assign进行对象的合并
+    // console.log(row);
+    Object.assign(attrParams.value, JSON.parse(JSON.stringify(row)));
+};
+const deleteAttr = async (attrId: number) => {
+    //发相应的删除已有的属性的请求
+    let result = await reqRemoveAttr(attrId);
+    //删除成功
+    if (result.code == 200) {
+        ElMessage({
+            type: 'success',
+            message: '删除成功'
+        });
+        //获取一次已有的属性与属性值
+        getAttr();
+    } else {
+        ElMessage({
+            type: 'error',
+            message: '删除失败'
+        });
+    };
+};
+onBeforeUnmount(() => {
+    //清空仓库的数据
+    // 组合式api没有这个清空函数
+    // categoryStore.$reset();
+})
 </script>
   
 <style lang="" scoped></style>

@@ -1,6 +1,6 @@
 //这里书写属性相关的API文件
 import request from '@/utils/request'
-import type { CategoryResponseData, AttrResponseData, Attr } from './type'
+import type { CategoryResponseData, AttrResponseData, Attr, ResponseData } from './type'
 //属性管理模块接口地址
 enum API {
     //获取一级分类接口地址
@@ -37,8 +37,8 @@ export const reqAttr = (
 
 //新增或者修改已有的属性接口
 export const reqAddOrUpdateAttr = (data: Attr) =>
-    request.post<any, any>(API.ADDORUPDATEATTR_URL, data)
+    request.post<any, ResponseData>(API.ADDORUPDATEATTR_URL, data)
 
 //删除某一个已有的属性业务
 export const reqRemoveAttr = (attrId: number) =>
-    request.delete<any, any>(API.DELETEATTR_URL + attrId)
+    request.delete<any, ResponseData>(API.DELETEATTR_URL + attrId)
