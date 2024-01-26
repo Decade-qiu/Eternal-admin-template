@@ -114,6 +114,14 @@ const addAttr = () => {
         return;
     }
     //跳转到添加属性的页面
+    attrParams.value = {
+        attrName: '', //新增的属性的名字
+        attrValueList: [
+            //新增的属性值数组
+        ],
+        categoryId: c3Id, //三级分类的ID
+        categoryLevel: 3, //代表的是三级分类
+    };
     scene.value = true;
 };
 //添加属性值按钮的回调
@@ -188,6 +196,14 @@ const cancel = () => {
 };
 //table表格修改已有属性按钮的回调
 const updateAttr = (row: Attr) => {
+    attrParams.value = {
+        attrName: '', //新增的属性的名字
+        attrValueList: [
+            //新增的属性值数组
+        ],
+        categoryId: '', //三级分类的ID
+        categoryLevel: 3, //代表的是三级分类
+    };
     //切换为添加与修改属性的结构
     scene.value = true;
     //将已有的属性对象赋值给attrParams对象即为
@@ -217,6 +233,7 @@ onBeforeUnmount(() => {
     //清空仓库的数据
     // 组合式api没有这个清空函数
     // categoryStore.$reset();
+    categoryStore.reset();
 })
 </script>
   

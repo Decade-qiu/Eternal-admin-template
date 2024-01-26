@@ -22,10 +22,19 @@ const useCategoryStore = defineStore('Category', () => {
         const res = await reqC3(c2Id.value);
         c3Arr.value = res.data;
     };
+    const reset = () => {
+        c1Arr.value = undefined;
+        c1Id.value = '';
+        c2Arr.value = undefined;
+        c2Id.value = '';
+        c3Arr.value = undefined;
+        c3Id.value = '';
+    }
     return {
         c1Arr,c1Id,getC1,
         c2Arr,c2Id,getC2,
-        c3Arr,c3Id,getC3
+        c3Arr,c3Id,getC3,
+        reset
     };
 })
 
