@@ -29,7 +29,7 @@
                     @current-change="getHasSpu" @size-change="changeSize" />
             </div>
             <!-- 添加或者修改SPU -->
-            <spuForm v-show="scene == 1" :operator="operator" @changeScene="changeScene"></spuForm>
+            <spuForm ref="spu" v-show="scene == 1" :operator="operator" @changeScene="changeScene"></spuForm>
             <!-- 添加SKU -->
             <skuForm v-show="scene == 2"></skuForm>
         </el-card>
@@ -58,6 +58,8 @@ let total = ref<number>(0);
 let records = ref<Records>([]);
 //判断spu是添加还是修改
 let operator = ref<string>('add');
+//spu子组件
+let spu = ref<InstanceType<typeof spuForm>>();
 //获取数据
 const getHasSpu = async (page: number = 1) => {
     pageNo.value = page;
@@ -90,11 +92,11 @@ const addSpu = () => {
 };
 //修改已有的SPU的按钮的回调
 const updateSpu = (row: SpuData) => {
+    //调用子组件实例方法获取完整已有的SPU的数据
+    spu.value?.initHasSpuData(row);
     //切换为场景1:添加与修改已有SPU结构->SpuForm
     scene.value = 1;
     operator.value = 'update';
-    //调用子组件实例方法获取完整已有的SPU的数据
-    // spu.value.initHasSpuData(row);
 };
 //子组件SpuForm绑定自定义事件:目前是让子组件通知父组件切换场景为0
 const changeScene = (args: changeSceneType) => {
