@@ -12,7 +12,7 @@
                     <el-table-column label="SPU操作">
                         <!-- row:即为已有的SPU对象 -->
                         <template v-slot="{ row, $index }">
-                            <el-button type="primary" size="small" icon="Plus" title="添加SKU"></el-button>
+                            <el-button type="primary" size="small" icon="Plus" title="添加SKU" @click="addSku(row)"></el-button>
                             <el-button type="warning" size="small" icon="Edit" title="修改SPU" @click="updateSpu(row)"></el-button>
                             <el-button type="info" size="small" icon="View" title="查看SKU列表"></el-button>
                             <el-popconfirm :title="`你确定删除${row.spuName}?`" width="200px">
@@ -31,15 +31,14 @@
             <!-- 添加或者修改SPU -->
             <spuForm ref="spu" v-show="scene == 1" :operator="operator" @changeScene="changeScene"></spuForm>
             <!-- 添加SKU -->
-            <skuForm v-show="scene == 2"></skuForm>
+            <skuForm ref="sku" v-show="scene == 2" :operator="operator" @changeScene="changeScene"></skuForm>
         </el-card>
-
     </div>
 </template>
   
   
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from 'vue';
+import { ref, watch } from 'vue';
 import { reqHasSpu } from '@/api/product/spu';
 import { Records, SpuData } from '@/api/product/spu/type';
 import useCategoryStore from '@/store/modules/category';
@@ -60,6 +59,7 @@ let records = ref<Records>([]);
 let operator = ref<string>('add');
 //spu子组件
 let spu = ref<InstanceType<typeof spuForm>>();
+let sku = ref<InstanceType<typeof skuForm>>();
 //获取数据
 const getHasSpu = async (page: number = 1) => {
     pageNo.value = page;
@@ -84,11 +84,12 @@ const changeSize = (val: number) => {
 };
 //添加新的SPU按钮的回调
 const addSpu = () => {
+    //点击添加SPU按钮,调用子组件的方法初始化数据
+    spu.value!.initAddSpu(categoryStore.c3Id!);
+    // spu.value?.initAddSpu(categoryStore.c3Id!);
     //切换为场景1:添加与修改已有SPU结构->SpuForm
     scene.value = 1;
     operator.value = 'add';
-    //点击添加SPU按钮,调用子组件的方法初始化数据
-    // spu.value.initAddSpu(categoryStore.c3Id);
 };
 //修改已有的SPU的按钮的回调
 const updateSpu = (row: SpuData) => {
@@ -109,7 +110,13 @@ const changeScene = (args: changeSceneType) => {
         //添加留在第一页
         getHasSpu();
     }
-}
+};
+//添加sku
+const addSku = (row: SpuData) => {
+    sku.value?.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row);
+    scene.value = 2;
+    operator.value = 'update';
+};
 </script>
   
   
