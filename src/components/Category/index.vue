@@ -41,7 +41,7 @@ onMounted(async () => {
     getC1();
     watch(() => categoryStore.c1Arr, (newC1Arr) => {
         if (newC1Arr && newC1Arr.length > 0) {
-            categoryStore.c1Id = newC1Arr[0].id;
+            categoryStore.c1Id = newC1Arr[1].id;
             categoryStore.getC2();
             watch(() => categoryStore.c2Arr, async (newC2Arr) => {
                 if (newC2Arr && newC2Arr.length > 0) {

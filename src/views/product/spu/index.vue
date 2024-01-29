@@ -4,7 +4,8 @@
         <category :scene="scene"></category>
         <el-card style="margin: 10px auto">
             <div v-show="scene == 0">
-                <el-button type="primary" size="default" icon="Plus" @click="addSpu" :disabled="categoryStore.c3Id==0">添加SPU</el-button>
+                <el-button type="primary" size="default" icon="Plus" @click="addSpu"
+                    :disabled="categoryStore.c3Id == 0">添加SPU</el-button>
                 <el-table border style="margin: 10px 10px" :data="records">
                     <el-table-column label="序号" type="index" align="center" width="80px"></el-table-column>
                     <el-table-column label="SPU名称" prop="spuName"></el-table-column>
@@ -12,10 +13,13 @@
                     <el-table-column label="SPU操作">
                         <!-- row:即为已有的SPU对象 -->
                         <template v-slot="{ row, $index }">
-                            <el-button type="primary" size="small" icon="Plus" title="添加SKU" @click="addSku(row)"></el-button>
-                            <el-button type="warning" size="small" icon="Edit" title="修改SPU" @click="updateSpu(row)"></el-button>
-                            <el-button type="info" size="small" icon="View" title="查看SKU列表"></el-button>
-                            <el-popconfirm :title="`你确定删除${row.spuName}?`" width="200px">
+                            <el-button type="primary" size="small" icon="Plus" title="添加SKU"
+                                @click="addSku(row)"></el-button>
+                            <el-button type="warning" size="small" icon="Edit" title="修改SPU"
+                                @click="updateSpu(row)"></el-button>
+                            <el-button type="info" size="small" icon="View" title="查看SKU列表"
+                                @click="findSku(row)"></el-button>
+                            <el-popconfirm :title="`你确定删除${row.spuName}?`" width="200px" @confirm="deleteSpu(row)">
                                 <template #reference>
                                     <el-button type="danger" size="small" icon="Delete" title="删除SPU"></el-button>
                                 </template>
@@ -33,17 +37,30 @@
             <!-- 添加SKU -->
             <skuForm ref="sku" v-show="scene == 2" :operator="operator" @changeScene="changeScene"></skuForm>
         </el-card>
+        <el-dialog v-model="showSkuList" title="SKU列表" @close="closeShow">
+            <el-table border :data="skuArr">
+                <el-table-column label="SKU名字" prop="skuName"></el-table-column>
+                <el-table-column label="SKU价格" prop="price"></el-table-column>
+                <el-table-column label="SKU重量" prop="weight"></el-table-column>
+                <el-table-column label="SKU图片">
+                    <template v-slot="{ row, $index }">
+                        <img :src="row.skuDefaultImg" style="width: 100px; height: 100px" />
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
     </div>
 </template>
   
   
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { reqHasSpu } from '@/api/product/spu';
-import { Records, SpuData } from '@/api/product/spu/type';
+import { ref, watch, onBeforeUnmount } from 'vue';
+import { reqHasSpu, reqSkuList, reqRemoveSpu } from '@/api/product/spu';
+import { Records, SpuData, SkuData } from '@/api/product/spu/type';
 import useCategoryStore from '@/store/modules/category';
 import spuForm, { changeSceneType } from './spuForm.vue';
 import skuForm from './skuForm.vue';
+import { ElMessage } from 'element-plus';
 let categoryStore = useCategoryStore();
 //场景的数据 0:显示已有SPU  1:添加或者修改已有SPU 2:添加SKU的结构
 let scene = ref<number>(0);
@@ -60,6 +77,9 @@ let operator = ref<string>('add');
 //spu子组件
 let spu = ref<InstanceType<typeof spuForm>>();
 let sku = ref<InstanceType<typeof skuForm>>();
+//sku列表
+let showSkuList = ref<boolean>(false);
+let skuArr = ref<SkuData[]>([]);
 //获取数据
 const getHasSpu = async (page: number = 1) => {
     pageNo.value = page;
@@ -111,12 +131,35 @@ const changeScene = (args: changeSceneType) => {
         getHasSpu();
     }
 };
+//删除spu
+const deleteSpu = (row: SpuData) => {
+    reqRemoveSpu(row.id!).then(res => {
+        if (res.code == 200) {
+            ElMessage.success('删除成功');
+            getHasSpu(pageNo.value);
+        }else{
+            ElMessage.error('删除失败');
+        }
+    });
+};
 //添加sku
 const addSku = (row: SpuData) => {
     sku.value?.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row);
     scene.value = 2;
     operator.value = 'update';
 };
+//查看sku列表
+const findSku = async (row: SpuData) => {
+    let res = await reqSkuList(row.id!);
+    skuArr.value = res.data;
+    showSkuList.value = true;
+};
+const closeShow = () => {
+    showSkuList.value = false;
+};
+onBeforeUnmount(() => {
+    categoryStore.reset();
+});
 </script>
   
   
