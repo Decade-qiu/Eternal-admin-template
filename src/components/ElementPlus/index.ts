@@ -70,6 +70,7 @@ import {
     ElDropdownMenu,
     ElDialog,
     ElUpload,
+    ElDrawer
 } from 'element-plus';
 
 export const components = [
@@ -139,7 +140,7 @@ export const components = [
     ElDropdownMenu,
     ElDialog,
     ElUpload,
-
+    ElDrawer
 ]
 
 export const plugins = [
