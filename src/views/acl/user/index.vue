@@ -160,8 +160,6 @@ const setRole = async (row: User) => {
     userRoleDrawer.value = true;
 };
 const saveRole = async () => {
-    console.log(userRole.value);
-    console.log(checkAll.value, isIndeterminate.value);
     let res = await reqSetUserRole({ userId: userParams.value.id!, roleIdList: userRole.value });
     if (res.code === 200) {
         ElMessage.success(res.message);
