@@ -5,12 +5,25 @@ import { reqLogin, reqUserInfo, reqLogout } from '@/api/user';
 //引入数据类型
 import { loginFormData, userInfoReponseData } from '@/api/user/type';
 //引入常量路由
-import { constantRoute } from '@/router/router';
+import { constantRoute, asnycRoute, anyRoute } from '@/router/router';
 import { Ref, ref, computed } from 'vue';
+//@ts-expect-error
+import cloneDeep from 'lodash/cloneDeep';
 //创建用户小仓库 
+const filterRouter = (asnycRoute: any[], routes: string[]) => {
+    return asnycRoute.filter((route) => {
+        if (routes.includes(route.name)) {
+            if (route.children) {
+                route.children = filterRouter(route.children, routes);
+            }
+            return true;
+        }
+    })
+};
 const useUserStore = defineStore('User', () => {
     const token = ref<string>("");
     const data = ref<userInfoReponseData['data'] | {}>({});
+    const menuRouter = ref<any[]>([...constantRoute, ...anyRoute]);
     async function login(data: loginFormData): Promise<string> {
         const res = await reqLogin(data);
         if (res.code == 200) {
@@ -27,6 +40,8 @@ const useUserStore = defineStore('User', () => {
         const res = await reqUserInfo();
         if (res.code == 200) {
             data.value = res.data;
+            menuRouter.value = [...constantRoute, ...anyRoute];
+            menuRouter.value.push(...filterRouter(cloneDeep(asnycRoute), res.data.routes));
             return Promise.resolve(data);
         } else {
             return Promise.reject(new Error(res.message));
@@ -50,7 +65,7 @@ const useUserStore = defineStore('User', () => {
     return {
         login,
         token: _getToken,
-        constantRoute,
+        menuRouter,
         userInfo,
         data: data as Ref<userInfoReponseData['data']>,
         logout,

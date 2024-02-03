@@ -1,11 +1,11 @@
-// vue-router的使用
+//vue-router的使用
 import { createRouter, createWebHashHistory } from 'vue-router';
-import { constantRoute } from './router';
+import { constantRoute, anyRoute, asnycRoute } from './router';
 //创建路由器
 const router = createRouter({
     //路由模式hash
     history: createWebHashHistory(),
-    routes: constantRoute,
+    routes: [...constantRoute, ...anyRoute, ...asnycRoute],
     //滚动行为
     scrollBehavior() {
         return {
