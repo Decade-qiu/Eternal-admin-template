@@ -63,7 +63,6 @@ const route = useRoute();
         position: fixed;
         width: calc(100% - $base-menu-width);
         height: $base-tabbar-height;
-        background-color: $base-tabbar-background;
         top: 0px;
         left: $base-menu-width;
         transition: all 0.3s;

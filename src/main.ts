@@ -4,6 +4,8 @@ import App from "@/App.vue";
 import pinia from "@/store";
 // elm组件
 import 'element-plus/dist/index.css';
+//暗黑模式需要的样式
+import 'element-plus/theme-chalk/dark/css-vars.css'
 // svg图标服务
 import 'virtual:svg-icons-register';
 // 常用的组件 进行全局注册
