@@ -24,6 +24,7 @@ const useUserStore = defineStore('User', () => {
     const token = ref<string>("");
     const data = ref<userInfoReponseData['data'] | {}>({});
     const menuRouter = ref<any[]>([...constantRoute, ...anyRoute]);
+    const buttons = ref<string[]>([]);
     async function login(data: loginFormData): Promise<string> {
         const res = await reqLogin(data);
         if (res.code == 200) {
@@ -42,6 +43,7 @@ const useUserStore = defineStore('User', () => {
             data.value = res.data;
             menuRouter.value = [...constantRoute, ...anyRoute];
             menuRouter.value.push(...filterRouter(cloneDeep(asnycRoute), res.data.routes));
+            buttons.value = res.data.buttons;
             return Promise.resolve(data);
         } else {
             return Promise.reject(new Error(res.message));
@@ -66,6 +68,7 @@ const useUserStore = defineStore('User', () => {
         login,
         token: _getToken,
         menuRouter,
+        buttons,
         userInfo,
         data: data as Ref<userInfoReponseData['data']>,
         logout,

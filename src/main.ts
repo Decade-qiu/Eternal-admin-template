@@ -14,6 +14,8 @@ import globalComponents from "@/components";
 import "@/styles/index.scss";
 // 引入路由
 import router from "@/router";
+// 引入全局自定义指令
+import { isHasButton } from "@/directive/has";
 
 const app = createApp(App);
 
@@ -21,4 +23,5 @@ const app = createApp(App);
 app.use(globalComponents);
 app.use(router);
 app.use(pinia);
+isHasButton(app);
 app.mount('#app');

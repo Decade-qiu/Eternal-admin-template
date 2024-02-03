@@ -37,7 +37,7 @@ let router = useRouter();
 let route = useRoute();
 let flag = ref(false);
 let userStore = useUserStore();
-let loginForm = ref({ username: 'admin', password: 'atguigu123' });
+let loginForm = ref({ username: 'admin', password: '111111' });
 let forms = ref<FormInstance>();
 //自定义校验规则函数
 const validatorUserName = (rule: any, value: any, callback: any) => {
@@ -110,7 +110,7 @@ const login = async () => {
     .login_form {
         position: relative;
         top: 35vh;
-        background-image: url('@/assets/images/login_form.jpg');
+        background-image: url('@/assets/images/login_form.png');
         background-size: cover;
         border-radius: 20px;
         border: 1px solid #ccc;
